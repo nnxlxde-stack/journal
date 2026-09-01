@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Журнал посещаемости
 
-## Getting Started
+Приложение для учёта посещаемости занятий: семестры, группы, дисциплины, студенты, занятия и отметки посещаемости с аналитикой.
 
-First, run the development server:
+Технологический стек (см. `docs/architecture-spec.md` и `docs/style_specs.md`):
+
+- **Next.js 16** (App Router, Server Components, Server Actions, Proxy)
+- **Supabase** (PostgreSQL + Auth, RLS) — отдельная инфраструктура
+- **Tailwind CSS v4** + **shadcn/ui** (Base UI / React Aria)
+- Тема **Neon Cupertino Dark** (dark-only, Inter)
+
+## Начало работы
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
+cp .env.example .env.local   # заполнить реальными значениями
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Открыть http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Переменные окружения
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Переменная | Назначение |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | URL Supabase-проекта |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Публичный publishable key (защищён RLS) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key — только сервер, никогда `NEXT_PUBLIC_` |
 
-## Learn More
+Секреты не коммитятся (`.env*` в `.gitignore`). Для продакшена переменные прописываются в Vercel → Project → Settings → Environment Variables (Production + Preview отдельно).
 
-To learn more about Next.js, take a look at the following resources:
+## База данных
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Миграции версионируются в `supabase/migrations/` (схема: семестры, группы, дисциплины, преподаватели, студенты, занятия, посещаемость, RLS).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Применение — через Supabase CLI или Dashboard SQL Editor, **не** через билд Vercel:
 
-## Deploy on Vercel
+```bash
+npx supabase db push --project-id <project-ref>
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+После миграций перегенерировать типы:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npx supabase gen types typescript --project-id <project-ref> > lib/types/database.types.ts
+```
+
+## Структура
+
+```
+app/
+  (auth)/login, (auth)/register      — вход/регистрация
+  (dashboard)/                       — каркас приложения (Sidebar/BottomNav/TopBar)
+    journal/                         — журнал посещаемости (+ [lessonId] — детали занятия)
+    groups/ disciplines/ students/   — справочники (+ детальные страницы)
+    semesters/                       — семестры
+    analytics/                       — графики и % посещаемости
+lib/
+  supabase/    — client.ts (browser), server.ts (RSC), middleware.ts (proxy), admin.ts (service role)
+  actions/     — Server Actions (lessons, attendance, students, groups, ...)
+  queries/     — серверное чтение (get-journal, get-attendance-stats, ...)
+  validation/  — общие zod-схемы (клиент + сервер)
+  types/       — database.types.ts
+components/
+  ui/          — shadcn-компоненты
+  layout/      — sidebar, bottom-nav, top-bar
+  journal/     — таблица (desktop) / карточки (mobile) + toggle статуса
+```
+
+## Ключевые решения
+
+- **Чтение** — Server Components через `lib/queries`; **запись** — Server Actions через `lib/actions` (не Route Handlers).
+- **Адаптив** — раздельные mobile/desktop-версии (`journal-table` / `journal-cards`), переключение CSS-брейкпоинтами; в `proxy.ts` дополнительно выставляется хедер `x-device` для SSR-оптимизации.
+- **Next.js 16** — middleware переименован в **Proxy** (`proxy.ts`): обновление сессии Supabase + защита маршрутов.
+- **Безопасность** — service role key используется только в серверных доверенных операциях; обычные запросы — через publishable key + RLS.
+
+## Деплой
+
+1. **Supabase** — создать проект, применить миграции, включить Auth-провайдеры (email/password).
+2. **Vercel** — подключить репозиторий, прописать переменные окружения.
+3. Рекомендуется отдельный Supabase-проект для Preview/Staging, чтобы тестовые ветки не писали в прод.
