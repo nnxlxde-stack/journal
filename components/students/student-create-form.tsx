@@ -73,12 +73,13 @@ export function StudentCreateForm({
         <Label>Группа</Label>
         <Select
           aria-label="Группа"
+          className="w-full"
           selectedKey={watch("groupId")}
           onSelectionChange={(key) =>
             setValue("groupId", key ? String(key) : "", { shouldValidate: true })
           }
         >
-          <SelectTrigger className="h-11 w-full rounded-xl">
+          <SelectTrigger className="h-11! w-full rounded-xl">
             <SelectValue>
               {(state) => state.selectedText || "Выберите группу"}
             </SelectValue>

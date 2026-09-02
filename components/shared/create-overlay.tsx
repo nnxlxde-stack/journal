@@ -90,12 +90,14 @@ export function CreateOverlay({
               </Button>
             }
           />
-          <DrawerContent className="rounded-t-3xl p-5">
-            <DrawerHeader className="text-left">
-              <DrawerTitle>{title}</DrawerTitle>
-              <DrawerDescription>{description}</DrawerDescription>
-            </DrawerHeader>
-            {children}
+          <DrawerContent className="rounded-t-3xl">
+            <div className="no-scrollbar max-h-[84dvh] overflow-y-auto p-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
+              <DrawerHeader className="text-left">
+                <DrawerTitle>{title}</DrawerTitle>
+                <DrawerDescription>{description}</DrawerDescription>
+              </DrawerHeader>
+              {children}
+            </div>
           </DrawerContent>
         </Drawer>
       </div>

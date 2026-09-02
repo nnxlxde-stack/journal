@@ -91,12 +91,13 @@ export function SemesterCreateForm({
           <Label>Семестр</Label>
           <Select
             aria-label="Семестр"
+            className="w-full"
             selectedKey={watch("term")}
             onSelectionChange={(key) =>
               setValue("term", key === 2 ? 2 : 1)
             }
           >
-            <SelectTrigger className="h-11 w-full rounded-xl">
+            <SelectTrigger className="h-11! w-full rounded-xl">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

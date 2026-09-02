@@ -92,14 +92,14 @@ export function TopBar({ searchData }: { searchData: SearchData }) {
 
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-border/50 bg-background/60 px-4 backdrop-blur-xl md:px-8">
-      <h1 className="font-heading text-lg font-semibold tracking-tight">
+      <h1 className="min-w-0 truncate font-heading text-lg font-semibold tracking-tight">
         {title}
       </h1>
 
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="ml-auto flex h-10 items-center gap-2 rounded-xl border border-border bg-input/20 px-3 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary/60"
+        className="ml-auto flex h-11 w-11 items-center justify-center gap-2 rounded-xl border border-border bg-input/20 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary/60 sm:h-10 sm:w-auto sm:justify-start sm:px-3"
         aria-label="Поиск"
       >
         <Search className="size-4" />

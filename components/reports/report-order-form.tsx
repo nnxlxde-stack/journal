@@ -40,13 +40,14 @@ function FieldSelect({
       <Label>{label}</Label>
       <Select
         aria-label={label}
+        className="w-full"
         selectedKey={value || (allowAll ? "__all__" : "__none__")}
         onSelectionChange={(key) => {
           const v = key ? String(key) : "";
           onSelect(v === "__all__" ? "" : v);
         }}
       >
-        <SelectTrigger className="h-11 w-full rounded-xl">
+        <SelectTrigger className="h-11! w-full rounded-xl">
           <SelectValue>
             {(state) =>
               state.selectedItems.length > 0

@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { createClient } from "@/lib/supabase/server";
 import type { Enums } from "@/lib/types/database.types";
 
@@ -19,9 +21,9 @@ export type StudentWithHistory = {
 };
 
 /** Студент + история посещаемости (для карточки студента). */
-export async function getStudentWithHistory(
+export const getStudentWithHistory = cache(async (
   studentId: string,
-): Promise<StudentWithHistory | null> {
+): Promise<StudentWithHistory | null> => {
   const supabase = await createClient();
 
   const { data: student, error } = await supabase
@@ -54,4 +56,4 @@ export async function getStudentWithHistory(
     ...(student as { id: string; full_name: string; group: { id: string; name: string } | null }),
     history,
   } as unknown as StudentWithHistory;
-}
+});

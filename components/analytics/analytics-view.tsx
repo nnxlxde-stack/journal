@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -65,8 +67,13 @@ function DistributionChart({ stats }: { stats: AttendanceStats }) {
         <CardTitle className="text-base">Распределение статусов</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-56 w-full">
-          <BarChart data={data} accessibilityLayer>
+        <ChartContainer
+          config={chartConfig}
+          className="h-56 w-full"
+          role="img"
+          aria-label="Распределение статусов посещаемости"
+        >
+          <BarChart data={data} accessibilityLayer={false}>
             <CartesianGrid vertical={false} stroke="hsl(222 30% 18%)" />
             <XAxis
               dataKey="status"
@@ -76,7 +83,7 @@ function DistributionChart({ stats }: { stats: AttendanceStats }) {
               tickMargin={8}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="count" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="count" name="Отметок" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ChartContainer>
       </CardContent>
@@ -84,8 +91,7 @@ function DistributionChart({ stats }: { stats: AttendanceStats }) {
   );
 }
 
-function StudentsList({ students }: { students: StudentStats[] }) {
-  return (
+function StudentsList({ students }: { students: StudentStats[] }) {  return (
     <Card className="glass rounded-2xl shadow-lg shadow-black/40">
       <CardHeader>
         <CardTitle className="text-base">По студентам</CardTitle>
@@ -118,6 +124,19 @@ function StudentsList({ students }: { students: StudentStats[] }) {
   );
 }
 
+/** Реакция на медиа-запрос: чтобы не монтировать графики в скрытых блоках. */
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    setMatches(mql.matches);
+    const onChange = (event: MediaQueryListEvent) => setMatches(event.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, [query]);
+  return matches;
+}
+
 /**
  * Аналитика: desktop — сетка карточек (всё сразу),
  * mobile — Tabs с переключением между метриками.
@@ -129,11 +148,14 @@ export function AnalyticsView({
   stats: AttendanceStats;
   students: StudentStats[];
 }) {
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const [tab, setTab] = useState("summary");
+
   return (
     <>
       {/* Mobile: Tabs */}
       <div className="flex flex-col gap-3 md:hidden">
-        <Tabs defaultSelectedKey="summary">
+        <Tabs selectedKey={tab} onSelectionChange={(key) => setTab(String(key))}>
           <TabsList className="w-full">
             <TabsTrigger id="summary" className="flex-1">
               Сводка
@@ -149,7 +171,7 @@ export function AnalyticsView({
             <MetricCards stats={stats} />
           </TabsContent>
           <TabsContent id="chart">
-            <DistributionChart stats={stats} />
+            {tab === "chart" ? <DistributionChart stats={stats} /> : null}
           </TabsContent>
           <TabsContent id="students">
             <StudentsList students={students} />
@@ -158,13 +180,15 @@ export function AnalyticsView({
       </div>
 
       {/* Desktop: всё сразу */}
-      <div className="hidden flex-col gap-3 md:flex">
-        <MetricCards stats={stats} />
-        <div className="grid grid-cols-2 gap-3">
-          <DistributionChart stats={stats} />
-          <StudentsList students={students} />
+      {isDesktop ? (
+        <div className="hidden flex-col gap-3 md:flex">
+          <MetricCards stats={stats} />
+          <div className="grid grid-cols-2 gap-3">
+            <DistributionChart stats={stats} />
+            <StudentsList students={students} />
+          </div>
         </div>
-      </div>
+      ) : null}
     </>
   );
 }

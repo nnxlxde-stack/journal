@@ -37,7 +37,6 @@ import {
   createLessonSchema,
   type CreateLessonInput,
 } from "@/lib/validation/lesson.schema";
-import { cn } from "@/lib/utils";
 
 type Option = { id: string; name: string };
 
@@ -59,10 +58,11 @@ function FormSelect({
       <Label>{label}</Label>
       <Select
         aria-label={label}
+        className="w-full"
         selectedKey={value ?? undefined}
         onSelectionChange={(key) => onChange(key ? String(key) : "")}
       >
-        <SelectTrigger className="h-11 w-full rounded-xl">
+        <SelectTrigger className="h-11! w-full rounded-xl">
           <SelectValue>
             {(state) => state.selectedText || placeholder}
           </SelectValue>
@@ -212,6 +212,7 @@ function LessonForm({
           <Label>Тип занятия</Label>
           <Select
             aria-label="Тип занятия"
+            className="w-full"
             selectedKey={watch("lessonType")}
             onSelectionChange={(key) =>
               setValue(
@@ -220,7 +221,7 @@ function LessonForm({
               )
             }
           >
-            <SelectTrigger className="h-11 w-full rounded-xl">
+            <SelectTrigger className="h-11! w-full rounded-xl">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -320,14 +321,16 @@ export function CreateLessonDialog({
               </Button>
             }
           />
-          <DrawerContent className={cn("rounded-t-3xl p-5")}>
-            <DrawerHeader className="text-left">
-              <DrawerTitle>Новое занятие</DrawerTitle>
-              <DrawerDescription>
-                Дисциплина, группа, дата и пара.
-              </DrawerDescription>
-            </DrawerHeader>
-            <LessonForm {...sharedProps} onSuccess={closeBoth} />
+          <DrawerContent className="rounded-t-3xl">
+            <div className="no-scrollbar max-h-[84dvh] overflow-y-auto p-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
+              <DrawerHeader className="text-left">
+                <DrawerTitle>Новое занятие</DrawerTitle>
+                <DrawerDescription>
+                  Дисциплина, группа, дата и пара.
+                </DrawerDescription>
+              </DrawerHeader>
+              <LessonForm {...sharedProps} onSuccess={closeBoth} />
+            </div>
           </DrawerContent>
         </Drawer>
       </div>

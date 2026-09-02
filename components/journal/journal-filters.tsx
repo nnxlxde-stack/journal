@@ -38,13 +38,14 @@ function FiltersInner({
   const semester = searchParams.get("semester") ?? undefined;
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center">
       <Select
         aria-label="Группа"
+        className="w-full sm:w-fit"
         selectedKey={group}
         onSelectionChange={(key) => setParam("group", key ? String(key) : "")}
       >
-        <SelectTrigger className="h-10 w-44 rounded-xl">
+        <SelectTrigger className="h-11! w-full rounded-xl sm:w-44">
           <SelectValue>
             {(state) => state.selectedText || "Все группы"}
           </SelectValue>
@@ -60,12 +61,13 @@ function FiltersInner({
 
       <Select
         aria-label="Дисциплина"
+        className="w-full sm:w-fit"
         selectedKey={discipline}
         onSelectionChange={(key) =>
           setParam("discipline", key ? String(key) : "")
         }
       >
-        <SelectTrigger className="h-10 w-44 rounded-xl">
+        <SelectTrigger className="h-11! w-full rounded-xl sm:w-44">
           <SelectValue>
             {(state) => state.selectedText || "Все дисциплины"}
           </SelectValue>
@@ -81,12 +83,13 @@ function FiltersInner({
 
       <Select
         aria-label="Семестр"
+        className="w-full sm:w-fit"
         selectedKey={semester}
         onSelectionChange={(key) =>
           setParam("semester", key ? String(key) : "")
         }
       >
-        <SelectTrigger className="h-10 w-44 rounded-xl">
+        <SelectTrigger className="h-11! w-full rounded-xl sm:w-44">
           <SelectValue>
             {(state) => state.selectedText || "Все семестры"}
           </SelectValue>

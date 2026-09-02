@@ -1,8 +1,15 @@
+import { cache } from "react";
+
 import { createClient } from "@/lib/supabase/server";
 
-/** Справочные списки для форм, фильтров и страниц-каталогов. */
+/**
+ * Справочные списки для форм, фильтров и страниц-каталогов.
+ * Обёрнуты в React cache(): если один список запрашивается несколько раз
+ * в рамках одного серверного рендера (например, layout + страница) —
+ * выполняется только один запрос к БД.
+ */
 
-export async function getGroups() {
+export const getGroups = cache(async () => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("groups")
@@ -10,9 +17,9 @@ export async function getGroups() {
     .order("name");
   if (error) throw new Error(`Ошибка загрузки групп: ${error.message}`);
   return data;
-}
+});
 
-export async function getDisciplines() {
+export const getDisciplines = cache(async () => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("disciplines")
@@ -20,9 +27,9 @@ export async function getDisciplines() {
     .order("name");
   if (error) throw new Error(`Ошибка загрузки дисциплин: ${error.message}`);
   return data;
-}
+});
 
-export async function getSemesters() {
+export const getSemesters = cache(async () => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("semesters")
@@ -30,9 +37,9 @@ export async function getSemesters() {
     .order("year", { ascending: false });
   if (error) throw new Error(`Ошибка загрузки семестров: ${error.message}`);
   return data;
-}
+});
 
-export async function getStudents(groupId?: string) {
+export const getStudents = cache(async (groupId?: string) => {
   const supabase = await createClient();
   let query = supabase
     .from("students")
@@ -47,9 +54,9 @@ export async function getStudents(groupId?: string) {
     group_id: string;
     group: { name: string } | null;
   }[];
-}
+});
 
-export async function getTeachers() {
+export const getTeachers = cache(async () => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("teachers")
@@ -57,4 +64,4 @@ export async function getTeachers() {
     .order("full_name");
   if (error) throw new Error(`Ошибка загрузки преподавателей: ${error.message}`);
   return data;
-}
+});

@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { createClient } from "@/lib/supabase/server";
 import type { Enums } from "@/lib/types/database.types";
 
@@ -28,9 +30,9 @@ export type JournalLesson = {
  * Журнал посещаемости: занятия с вложенными справочниками и отметками.
  * Один источник истины для desktop-таблицы и mobile-карточек.
  */
-export async function getJournal(
+export const getJournal = cache(async (
   filters: JournalFilters = {},
-): Promise<JournalLesson[]> {
+): Promise<JournalLesson[]> => {
   const supabase = await createClient();
 
   let query = supabase
@@ -55,7 +57,7 @@ export async function getJournal(
   if (error) throw new Error(`Ошибка загрузки журнала: ${error.message}`);
 
   return data as unknown as JournalLesson[];
-}
+});
 
 export type LessonDetail = {
   id: string;
@@ -72,9 +74,9 @@ export type LessonDetail = {
 };
 
 /** Детальная отметка посещаемости конкретного занятия (со списком студентов группы). */
-export async function getLessonDetail(
+export const getLessonDetail = cache(async (
   lessonId: string,
-): Promise<LessonDetail | null> {
+): Promise<LessonDetail | null> => {
   const supabase = await createClient();
 
   const { data: lesson, error } = await supabase
@@ -113,4 +115,4 @@ export async function getLessonDetail(
     students: studentsResult.data ?? [],
     attendance: statusMap,
   } as unknown as LessonDetail;
-}
+});

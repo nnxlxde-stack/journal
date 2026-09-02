@@ -22,9 +22,9 @@ export default async function DashboardLayout({
   return (
     <div className="flex min-h-dvh">
       <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col pb-16 md:pb-0">
+      <div className="flex min-w-0 flex-1 flex-col pb-[calc(env(safe-area-inset-bottom)+4.5rem)] md:pb-0">
         <TopBar searchData={{ groups, disciplines, students }} />
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:px-8">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-5 sm:px-4 md:px-8 md:py-6">
           {children}
         </main>
       </div>

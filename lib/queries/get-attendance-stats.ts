@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { createClient } from "@/lib/supabase/server";
 import type { Enums } from "@/lib/types/database.types";
 
@@ -20,9 +22,9 @@ export type StudentStats = AttendanceStats & {
  * Сводная статистика посещаемости.
  * @param studentId — если передан, считает по одному студенту (карточка студента)
  */
-export async function getAttendanceStats(
+export const getAttendanceStats = cache(async (
   studentId?: string,
-): Promise<AttendanceStats> {
+): Promise<AttendanceStats> => {
   const supabase = await createClient();
 
   let query = supabase.from("attendance").select("status");
@@ -32,12 +34,12 @@ export async function getAttendanceStats(
   if (error) throw new Error(`Ошибка статистики: ${error.message}`);
 
   return summarize(data?.map((row) => row.status) ?? []);
-}
+});
 
 /** Статистика по каждому студенту в группе (для журнала и аналитики) */
-export async function getStudentsStats(
+export const getStudentsStats = cache(async (
   groupId?: string,
-): Promise<StudentStats[]> {
+): Promise<StudentStats[]> => {
   const supabase = await createClient();
 
   let query = supabase
@@ -65,7 +67,7 @@ export async function getStudentsStats(
     full_name,
     ...summarize(statuses),
   }));
-}
+});
 
 function summarize(statuses: Enums<"attendance_status">[]): AttendanceStats {
   const total = statuses.length;

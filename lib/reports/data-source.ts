@@ -77,8 +77,14 @@ function mapFact(
  * Модуль отчётности работает только через этот интерфейс.
  */
 export class SupabaseReportDataSource implements ReportDataSource {
-  private async client() {
-    return createClient();
+  /** Один клиент на все методы экземпляра (экземпляр создаётся на один запрос) */
+  private clientPromise:
+    | ReturnType<typeof createClient>
+    | null = null;
+
+  private client() {
+    if (!this.clientPromise) this.clientPromise = createClient();
+    return this.clientPromise;
   }
 
   async listSemesters(): Promise<SemesterRef[]> {

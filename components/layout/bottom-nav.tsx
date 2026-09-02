@@ -83,10 +83,11 @@ export function BottomNav() {
         side="bottom"
         className="rounded-t-3xl"
       >
-        <SheetHeader className="text-left">
-          <SheetTitle>Разделы</SheetTitle>
-          <SheetDescription>Остальные разделы журнала</SheetDescription>
-        </SheetHeader>
+        <div className="no-scrollbar max-h-[80dvh] overflow-y-auto px-5 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-5">
+          <SheetHeader className="text-left">
+            <SheetTitle>Разделы</SheetTitle>
+            <SheetDescription>Остальные разделы журнала</SheetDescription>
+          </SheetHeader>
           <div className="grid grid-cols-2 gap-2 pt-4">
             {secondaryNav.map((item) => {
               const active = isActive(pathname, item.href);
@@ -95,28 +96,30 @@ export function BottomNav() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={() => setSheetOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 rounded-2xl border px-4 py-4 text-sm font-medium",
+                    "flex min-h-12 items-center gap-3 rounded-2xl border px-4 py-3.5 text-sm font-medium",
                     active
                       ? "border-primary/40 bg-primary/10 text-primary"
                       : "border-border bg-card text-foreground",
                   )}
                 >
-                  <Icon className="size-4" />
+                  <Icon className="size-4 shrink-0" />
                   {item.label}
                 </Link>
               );
             })}
           </div>
-        <form action={logout} className="pt-4">
-          <button
-            type="submit"
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-destructive/10 py-4 text-sm font-medium text-destructive"
-          >
-            <LogOut className="size-4" />
-            Выйти
-          </button>
-        </form>
+          <form action={logout} className="pt-4">
+            <button
+              type="submit"
+              className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-destructive/10 py-3.5 text-sm font-medium text-destructive"
+            >
+              <LogOut className="size-4" />
+              Выйти
+            </button>
+          </form>
+        </div>
       </Sheet>
     </nav>
   );

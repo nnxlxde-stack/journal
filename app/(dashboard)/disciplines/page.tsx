@@ -47,7 +47,7 @@ export default async function DisciplinesPage() {
                   <button
                     type="submit"
                     aria-label="Удалить дисциплину"
-                    className="flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                    className="flex size-11 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                   >
                     <Trash2 className="size-4" />
                   </button>
