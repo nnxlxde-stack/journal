@@ -7,6 +7,7 @@ import {
   BookMarked,
   BookOpen,
   CalendarDays,
+  FileText,
   GraduationCap,
   LogOut,
   Users,
@@ -22,6 +23,7 @@ export const navItems = [
   { href: "/students", label: "Студенты", icon: GraduationCap },
   { href: "/semesters", label: "Семестры", icon: CalendarDays },
   { href: "/analytics", label: "Аналитика", icon: BarChart3 },
+  { href: "/reports", label: "Отчёты", icon: FileText },
 ];
 
 export function isActive(pathname: string, href: string) {

@@ -32,6 +32,7 @@ const titles: { prefix: string; title: string }[] = [
   { prefix: "/students", title: "Студенты" },
   { prefix: "/semesters", title: "Семестры" },
   { prefix: "/analytics", title: "Аналитика" },
+  { prefix: "/reports", title: "Отчёты" },
 ];
 
 /** Верхняя панель: заголовок раздела, быстрый поиск (⌘K), выход. */

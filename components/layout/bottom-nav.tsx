@@ -8,6 +8,7 @@ import {
   BookMarked,
   BookOpen,
   CalendarDays,
+  FileText,
   GraduationCap,
   LogOut,
   MoreHorizontal,
@@ -34,6 +35,7 @@ const primaryNav = [
 const secondaryNav = [
   { href: "/disciplines", label: "Дисциплины", icon: BookMarked },
   { href: "/semesters", label: "Семестры", icon: CalendarDays },
+  { href: "/reports", label: "Отчёты", icon: FileText },
 ];
 
 /** Mobile-навигация (< md): нижний таб-бар (Cupertino) + Sheet для второстепенных разделов. */
